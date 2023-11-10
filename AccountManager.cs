@@ -5,7 +5,8 @@ namespace BankApplication
         private List<User> users = new List<User>();
         private bool hasAccount = false;
         private Random random = new Random();
-        public string CreateAccount(string lastName, string firstName, string? middleName, string? email, string phoneNumber, string idNumber, string address, string occupation, DateTime birthDate, double initialBalance)        {
+        public string CreateAccount(string lastName, string firstName, string? middleName, string? email, string phoneNumber, string idNumber, string address, string occupation, DateTime birthDate, double initialBalance)
+        {
             if (hasAccount)
             {
                 Console.WriteLine("You already have an account with the bank.");
@@ -22,13 +23,14 @@ namespace BankApplication
                 MiddleName = middleName,
                 PhoneNumber = phoneNumber,
                 Email = email,
-                IdNumber = idNumber,
+                IDNumber = idNumber,
                 CreatedAt = DateTime.Now,
                 Address = address,
                 Occupation = occupation,
                 BirthDate = birthDate,
-                Balance = initialBalance
+                Balance = 0
             };
+
             users.Add(user);
 
             string fullName = $"{user.LastName} {user.FirstName}";
@@ -125,40 +127,14 @@ namespace BankApplication
             return accountNumber.ToString();
         }
 
-        private string GenerateATMNumber()
-        {
-        // Generate a 16-digit ATM number
-        string atmNumber = string.Empty;
-        for(int i = 0; i < 17; i++)
-        {
-            int digit = random.Next(10);
-            atmNumber += digit.ToString();
-        }
-        return atmNumber;
-        }
-
         private string GenerateCSV()
         {
-            // Generate a three-digit CSV
             int csv = random.Next(100, 1000);
             return csv.ToString();
         }
 
-        private string GenerateBVN()
-        {
-            // Generate an 11-digit BVN
-            string bvn = string.Empty;
-            for(int i = 0; i < 11; i++)
-            {
-                int digit = random.Next(10);
-                bvn += digit.ToString();
-            }
-            return bvn.ToString();
-        }
-
         private string GenerateATMPin()
         {
-            // Generate a four-digit unique ATM PIN
             int atmPin = random.Next(1000, 10000);
             return atmPin.ToString();
         }
