@@ -1,2 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using BankApplication;
+
+IAccountManager accountManager = new AccountManager();
+Menu menu = new Menu(accountManager);
+menu.DisplayMenu();

@@ -5,11 +5,11 @@ namespace BankApplication
         private string IDNumber;
         private string Address;
         private string Occupation;
-        public string LastName { get; set; } 
-        public string FirstName { get; set; }
-        public string MiddleName { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
+        public string LastName { get; set; } = default!;
+        public string FirstName { get; set; } = default!;
+        public string? MiddleName { get; set; } 
+        public string PhoneNumber { get; set; } = default!;
+        public string? Email { get; set; }
 
         public UserInfo(string lastName, string firstName, string middleName, string phoneNumber, string email, string idNumber, string address, string occupation)
         {

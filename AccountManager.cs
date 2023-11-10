@@ -2,142 +2,170 @@ namespace BankApplication
 {
     internal class AccountManager : IAccountManager
     {
-        private List<User> users = new List<User>();
+        private List<AccountInfo> accounts = new List<AccountInfo>();
         private bool hasAccount = false;
-        private Random random = new Random();
-        public string CreateAccount(string lastName, string firstName, string? middleName, string? email, string phoneNumber, string idNumber, string address, string occupation, DateTime birthDate, double initialBalance)
+        public void CreateAccount()
         {
+            int id = accounts.Count > 0 ? accounts.Count + 1 : 1;
+            Console.Write("Enter account number: ");
+            string accountNumber = Console.ReadLine()!;
+            var hasAccount = HasAccount(accountNumber);
             if (hasAccount)
             {
                 Console.WriteLine("You already have an account with the bank.");
-                return string.Empty;
+                return;
             }
 
-            int id = users.Count > 0 ? users.Count + 1 : 1;
+            Console.Write("Last Name: ");
+            string lastName = Console.ReadLine()!;
+            Console.Write("First Name: ");
+            string firstName = Console.ReadLine()!;
+            Console.Write("Middle Name: ");
+            string middleName = Console.ReadLine()!;
+            Console.Write("Phone Number: ");
+            string phoneNumber = Console.ReadLine()!;
+            Console.Write("Email: ");
+            string email = Console.ReadLine()!;
+            Console.WriteLine("Enter user information:");
+            Console.Write("ID Number: ");
+            string idNumber = Console.ReadLine()!;
+            Console.Write("Address: ");
+            string address = Console.ReadLine()!;
+            Console.Write("Occupation: ");
+            string occupation = Console.ReadLine()!;
 
-            var user = new User
-            {
-                Id = id,
-                LastName = lastName,
-                FirstName = firstName,
-                MiddleName = middleName,
-                PhoneNumber = phoneNumber,
-                Email = email,
-                IDNumber = idNumber,
-                CreatedAt = DateTime.Now,
-                Address = address,
-                Occupation = occupation,
-                BirthDate = birthDate,
-                Balance = 0
-            };
+            AccountInfo account = new AccountInfo(id, lastName, firstName, middleName, phoneNumber, email,idNumber, address, occupation);
+            accounts.Add(account);
 
-            users.Add(user);
-
-            string fullName = $"{user.LastName} {user.FirstName}";
-            if (!string.IsNullOrWhiteSpace(user.MiddleName))
-            {
-                fullName = $"{fullName} {user.MiddleName[0]}.";
-            }
-
-            string accountNumber = GenerateAccountNumber();
-            string atmNumber = GenerateATMNumber();
-            string csv = GenerateCSV();
-            string bvn = GenerateBVN();
-            string atmPin = GenerateATMPin();
-
-            Console.WriteLine($"Creating a new account for {fullName}...");
-            Console.WriteLine($"Account created successfully. Account Number: {accountNumber}");
-            Console.WriteLine($"ATM Number: {atmNumber}");
-            Console.WriteLine($"CSV: {csv}");
-            Console.WriteLine($"BVN: {bvn}");
-            Console.WriteLine($"ATM PIN: {atmPin}");
-            Console.WriteLine($"BALANCE: {initialBalance}");
-
-            hasAccount = true;
-            return accountNumber;
-        }
-
-        public void BankTransactionCharges()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CheckBalance()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CloseAccount()
-        {
-            throw new NotImplementedException();
+            Console.WriteLine("Account created successfully!");
         }
 
         public void Deposit()
         {
-            throw new NotImplementedException();
-        }
+            Console.Write("Enter account number: ");
+            string accountNumber = Console.ReadLine()!;
+            Console.Write("Enter amount to deposit: ");
+            double amount = Convert.ToDouble(Console.ReadLine());
 
-        public void FindAccount()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetAccount()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetAccountStatement()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetAllAccount()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetAccountLimit()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetAccountType()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Transfer()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateAccount()
-        {
-            throw new NotImplementedException();
+            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            if (account != null)
+            {
+                // Perform deposit operation on the account
+                Console.WriteLine($"Deposited {amount:C} to account {accountNumber}");
+            }
+            else
+            {
+                Console.WriteLine("Account not found!");
+            }
         }
 
         public void Withdraw()
         {
-            throw new NotImplementedException();
+            Console.Write("Enter account number: ");
+            string accountNumber = Console.ReadLine()!;
+            Console.Write("Enter amount to withdraw: ");
+            double amount = Convert.ToDouble(Console.ReadLine());
+
+            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            if (account != null)
+            {
+                // Perform withdraw operation on the account
+                Console.WriteLine($"Withdrawn {amount:C} from account {accountNumber}");
+            }
+            else
+            {
+                Console.WriteLine("Account not found!");
+            }
         }
-        private string GenerateAccountNumber()
+        
+        public void Transfer()
         {
-            int accountNumber = random.Next(100000000, 1000000000);
-            return accountNumber.ToString();
+            Console.Write("Enter sender account number: ");
+            string senderAccountNumber = Console.ReadLine()!;
+            Console.Write("Enter recipient account number: ");
+            string recipientAccountNumber = Console.ReadLine()!;
+            Console.Write("Enter amount to transfer: ");
+            double amount = Convert.ToDouble(Console.ReadLine());
+
+            AccountInfo senderAccount = FindAccountByAccountNumber(senderAccountNumber);
+            AccountInfo recipientAccount = FindAccountByAccountNumber(recipientAccountNumber);
+            if (senderAccount != null && recipientAccount != null)
+            {
+                // Perform transfer operation from sender to recipient
+                Console.WriteLine($"Transferred {amount:C} from account {senderAccountNumber} to account {recipientAccountNumber}");
+            }
+            else
+            {
+                Console.WriteLine("One or both of the accounts not found!");
+            }
         }
 
-        private string GenerateCSV()
+        public void CheckBalance()
         {
-            int csv = random.Next(100, 1000);
-            return csv.ToString();
+            Console.Write("Enter account number: ");
+            string accountNumber = Console.ReadLine()!;
+
+            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            if (account != null)
+            {
+                // Perform check balance operation on the account
+                Console.WriteLine($"Account Number: {accountNumber}");
+                Console.WriteLine($"Balance: {GetAccountBalance(accountNumber):C}");
+            }
+            else
+            {
+                Console.WriteLine("Account not found!");
+            }
         }
 
-        private string GenerateATMPin()
+        public void PrintAllAccounts()
         {
-            int atmPin = random.Next(1000, 10000);
-            return atmPin.ToString();
+            Console.WriteLine("Printing all accounts:");
+            foreach (AccountInfo account in accounts)
+            {
+                account.PrintAccountInfo();
+                Console.WriteLine("----------------------------------------");
+            }
+        }
+
+        public void CloseAccount()
+        {
+            Console.Write("Enter account number: ");
+            string accountNumber = Console.ReadLine()!;
+
+            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            if (account != null)
+            {
+                accounts.Remove(account);
+                Console.WriteLine($"Account {accountNumber} closed successfully!");
+            }
+            else
+            {
+                Console.WriteLine("Account not found!");
+            }
+        }
+
+        private bool HasAccount(string accountNumber)
+        {
+            return accounts.Any(account => account.AccountNumber == accountNumber);
+        }
+
+        private AccountInfo FindAccountByAccountNumber(string accountNumber)
+        {
+            return accounts.FirstOrDefault(account => account.AccountNumber == accountNumber)!;
+        }
+
+        private double GetAccountBalance(string accountNumber)
+        {
+            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            if (account != null)
+            {
+                return account.Balance;
+            }
+            else
+            {
+                throw new ArgumentException("Account not found!");
+            }
         }
     }
-
 }

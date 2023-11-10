@@ -2,11 +2,12 @@ namespace BankApplication
 {
     public class AccountInfo : UserInfo
     {
-        private string AccountNumber;
+        public string AccountNumber { get; private set; } = default!;
         private string BVNNumber;
         private string ATMNumber;
         private string ATMPin;
         private string CSVNumber;
+        public double Balance { get; private set; }
         public int Id { get; set; }
         
         Random random = new Random();
@@ -19,6 +20,7 @@ namespace BankApplication
             ATMNumber = GenerateATMNumber();
             ATMPin = GenerateATMPin();
             CSVNumber = GenerateCSVNumber();
+            Balance = 0;
         }
 
         private string GenerateAccountNumber()
@@ -83,6 +85,7 @@ namespace BankApplication
             Console.WriteLine("ATM Number: " + ATMNumber);
             Console.WriteLine("ATM Pin: " + ATMPin);
             Console.WriteLine("CSV Number: " + CSVNumber);
+            Console.WriteLine("Account Balance: " + Balance.ToString("C"));
         }
     }
 }
