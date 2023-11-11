@@ -30,7 +30,6 @@ namespace BankApplication
             Occupation = occupation;
         }
 
-        // Getters
         public string GetIDNumber()
         {
             return IDNumber;

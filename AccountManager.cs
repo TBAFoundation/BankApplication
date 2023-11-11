@@ -1,21 +1,23 @@
+using ConsoleTables;
+using Humanizer;
+
 namespace BankApplication
 {
     internal class AccountManager : IAccountManager
     {
         private List<AccountInfo> accounts = new List<AccountInfo>();
-        private bool hasAccount = false;
         public void CreateAccount()
         {
             int id = accounts.Count > 0 ? accounts.Count + 1 : 1;
-            Console.Write("Enter account number: ");
-            string accountNumber = Console.ReadLine()!;
+
+            string accountNumber = default!;
             var hasAccount = HasAccount(accountNumber);
             if (hasAccount)
             {
                 Console.WriteLine("You already have an account with the bank.");
                 return;
             }
-
+            Console.WriteLine("Enter user information:");
             Console.Write("Last Name: ");
             string lastName = Console.ReadLine()!;
             Console.Write("First Name: ");
@@ -26,15 +28,15 @@ namespace BankApplication
             string phoneNumber = Console.ReadLine()!;
             Console.Write("Email: ");
             string email = Console.ReadLine()!;
-            Console.WriteLine("Enter user information:");
             Console.Write("ID Number: ");
             string idNumber = Console.ReadLine()!;
             Console.Write("Address: ");
             string address = Console.ReadLine()!;
             Console.Write("Occupation: ");
             string occupation = Console.ReadLine()!;
+            var accountType = (AccountType)Utility.SelectEnum("Select Account type:\n1. Current Account\n2. Savings Account\n ", 1, 2);
 
-            AccountInfo account = new AccountInfo(id, lastName, firstName, middleName, phoneNumber, email,idNumber, address, occupation);
+            AccountInfo account = new(id, lastName, firstName, middleName, phoneNumber, email, idNumber, address, occupation, accountType);
             accounts.Add(account);
 
             Console.WriteLine("Account created successfully!");
@@ -47,7 +49,7 @@ namespace BankApplication
             Console.Write("Enter amount to deposit: ");
             double amount = Convert.ToDouble(Console.ReadLine());
 
-            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            AccountInfo account = FindAccount(accountNumber);
             if (account != null)
             {
                 // Perform deposit operation on the account
@@ -66,7 +68,7 @@ namespace BankApplication
             Console.Write("Enter amount to withdraw: ");
             double amount = Convert.ToDouble(Console.ReadLine());
 
-            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            AccountInfo account = FindAccount(accountNumber);
             if (account != null)
             {
                 // Perform withdraw operation on the account
@@ -87,8 +89,8 @@ namespace BankApplication
             Console.Write("Enter amount to transfer: ");
             double amount = Convert.ToDouble(Console.ReadLine());
 
-            AccountInfo senderAccount = FindAccountByAccountNumber(senderAccountNumber);
-            AccountInfo recipientAccount = FindAccountByAccountNumber(recipientAccountNumber);
+            AccountInfo senderAccount = FindAccount(senderAccountNumber);
+            AccountInfo recipientAccount = FindAccount(recipientAccountNumber);
             if (senderAccount != null && recipientAccount != null)
             {
                 // Perform transfer operation from sender to recipient
@@ -104,8 +106,7 @@ namespace BankApplication
         {
             Console.Write("Enter account number: ");
             string accountNumber = Console.ReadLine()!;
-
-            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            AccountInfo account = FindAccount(accountNumber);
             if (account != null)
             {
                 // Perform check balance operation on the account
@@ -118,13 +119,40 @@ namespace BankApplication
             }
         }
 
-        public void PrintAllAccounts()
+        public void GetAccount()
         {
-            Console.WriteLine("Printing all accounts:");
-            foreach (AccountInfo account in accounts)
+            Console.Write("Enter Acount Number: ");
+            string accountNumber = Console.ReadLine()!;
+
+            Console.WriteLine("Finding Acount Details... ");
+            AccountInfo account = FindAccount(accountNumber);
+            
+            if (account is null)
             {
-                account.PrintAccountInfo();
-                Console.WriteLine("----------------------------------------");
+                Console.WriteLine($"Accout with {accountNumber} not found");
+            }
+            else
+            {
+                Print();
+                Console.WriteLine("========================================================================");
+            }
+        }
+
+        public void GetAllAccounts()
+        {
+            Console.WriteLine("Printing Accounts...");
+            int accountCount = accounts.Count;
+            Console.WriteLine("You have " + "contact".ToQuantity(accountCount));
+            Console.WriteLine("Account Information");
+            if (accountCount == 0)
+            {
+                Console.WriteLine("There is no account added yet.");
+                return;
+            }
+            else
+            {
+                PrintAllAccounts();
+                Console.WriteLine("========================================================================");
             }
         }
 
@@ -133,7 +161,7 @@ namespace BankApplication
             Console.Write("Enter account number: ");
             string accountNumber = Console.ReadLine()!;
 
-            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            AccountInfo account = FindAccount(accountNumber);
             if (account != null)
             {
                 accounts.Remove(account);
@@ -150,14 +178,44 @@ namespace BankApplication
             return accounts.Any(account => account.AccountNumber == accountNumber);
         }
 
-        private AccountInfo FindAccountByAccountNumber(string accountNumber)
+        private AccountInfo FindAccount(string accountNumber)
         {
             return accounts.FirstOrDefault(account => account.AccountNumber == accountNumber)!;
         }
 
+        private void Print()
+        {
+            foreach (AccountInfo account in accounts)
+            {
+            string fullName = $"{account.LastName} {account.FirstName}";
+                if (!string.IsNullOrWhiteSpace(account.MiddleName))
+                {
+                    fullName = $"{fullName} {account.MiddleName[0]}.";
+                }
+                Console.WriteLine($"Name: {fullName}\nAccount Number: {account.AccountNumber}\nEmail: {account.Email}\nPhone Number: {account.PhoneNumber}");   
+            }
+        }
+
+        private void PrintAllAccounts()
+        {
+            var table = new ConsoleTable("Id", "Name", "Account Number", "Phone Number", "Email", "ID Number", "Address", "BVN Number", "Account Type", "Date Created");
+
+            foreach (AccountInfo account in accounts)
+            {
+            string fullName = $"{account.LastName} {account.FirstName}";
+                if (!string.IsNullOrWhiteSpace(account.MiddleName))
+                {
+                    fullName = $"{fullName} {account.MiddleName[0]}.";
+                }
+            table.AddRow(account.Id, fullName, account.AccountNumber, account.PhoneNumber, account.Email, account.GetIDNumber(), account.GetAddress(),
+            account.BVNNumber, ((AccountType)account.accountType).Humanize(), account.CreatedAt.Humanize());
+            }
+            table.Write(Format.Alternative);
+        }
+
         private double GetAccountBalance(string accountNumber)
         {
-            AccountInfo account = FindAccountByAccountNumber(accountNumber);
+            AccountInfo account = FindAccount(accountNumber);
             if (account != null)
             {
                 return account.Balance;

@@ -7,7 +7,8 @@ namespace BankApplication
         void Withdraw();
         void Transfer();
         void CheckBalance();
-        void PrintAllAccounts();
+        void GetAccount();
+        void GetAllAccounts();
         void CloseAccount();
     }
 }
