@@ -107,15 +107,15 @@ namespace BankApplication
 
         public void GetAccount()
         {
-            Console.Write("Enter Acount Number: ");
-            string accountNumber = Console.ReadLine()!;
+            Console.Write("Enter Acount Name: ");
+            string LastName = Console.ReadLine()!;
 
             Console.WriteLine("Finding Acount Details... ");
-            AccountInfo account = FindAccount(accountNumber);
+            AccountInfo account = FindAccount(LastName);
             
             if (account is null)
             {
-                Console.WriteLine($"Accout with {accountNumber} not found");
+                Console.WriteLine($"Accout with {LastName} not found");
             }
             else
             {
@@ -164,27 +164,24 @@ namespace BankApplication
             return accounts.Any(account => account.AccountNumber == accountNumber);
         }
 
-        private AccountInfo FindAccount(string accountNumber)
+        private AccountInfo FindAccount(string LastName)
         {
-            return accounts.FirstOrDefault(account => account.AccountNumber == accountNumber)!;
+            return accounts.FirstOrDefault(account => account.LastName == LastName)!;
         }
 
         private void Print()
         {
             foreach (AccountInfo account in accounts)
             {
-            string fullName = $"{account.LastName} {account.FirstName}";
-                if (!string.IsNullOrWhiteSpace(account.MiddleName))
-                {
-                    fullName = $"{fullName} {account.MiddleName[0]}.";
-                }
-                Console.WriteLine($"Name: {fullName}\nAccount Number: {account.AccountNumber}\nEmail: {account.Email}\nPhone Number: {account.PhoneNumber}");   
+            string fullName = $"{account.LastName} {account.FirstName} {account.MiddleName}";
+                
+                Console.WriteLine($"Name: {fullName}\nAccount Number: {account.AccountNumber}\nEmail: {account.Email}\nPhone Number: {account.PhoneNumber}\nAccount Balance: {account.Balance}");   
             }
         }
 
         private void PrintAllAccounts()
         {
-            var table = new ConsoleTable("Id", "Name", "Account Number", "Phone Number", "Email", "ID Number", "Address", "Occupation", "BVN Number", "ATM Number", "ATM Pin", "CSV Number", "Account Type", "Date Created");
+            var table = new ConsoleTable("Id", "Name", "Account Number", "Phone Number", "Email", "ID Number", "Address", "Occupation", "BVN Number", "ATM Number", "ATM Pin", "CSV Number", "Account Type", "Balance", "Date Created");
 
             foreach (AccountInfo account in accounts)
             {
@@ -193,7 +190,7 @@ namespace BankApplication
                 {
                     fullName = $"{fullName} {account.MiddleName[0]}.";
                 }
-            table.AddRow(account.Id, fullName, account.AccountNumber, account.PhoneNumber, account.Email, account.GetIDNumber(), account.GetAddress(), account.GetOccupation(), account.BVNNumber, account.ATMNumber, account.ATMPin, account.CSVNumber, account.AccountType.Humanize(), account.CreatedAt.Humanize());
+            table.AddRow(account.Id, fullName, account.AccountNumber, account.PhoneNumber, account.Email, account.GetIDNumber(), account.GetAddress(), account.GetOccupation(), account.BVNNumber, account.ATMNumber, account.ATMPin, account.CSVNumber, account.AccountType.Humanize(), account.Balance, account.CreatedAt.Humanize());
             }
             table.Write(Format.Alternative);
         }
