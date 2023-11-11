@@ -6,6 +6,7 @@ namespace BankApplication
     internal class AccountManager : IAccountManager
     {
         private List<AccountInfo> accounts = new List<AccountInfo>();
+        private UserAccount userAccount = new UserAccount();
         public void CreateAccount()
         {
             int id = accounts.Count > 0 ? accounts.Count + 1 : 1;
@@ -17,26 +18,11 @@ namespace BankApplication
                 Console.WriteLine("You already have an account with the bank.");
                 return;
             }
-            Console.WriteLine("Enter user information:");
-            Console.Write("Last Name: ");
-            string lastName = Console.ReadLine()!;
-            Console.Write("First Name: ");
-            string firstName = Console.ReadLine()!;
-            Console.Write("Middle Name: ");
-            string middleName = Console.ReadLine()!;
-            Console.Write("Phone Number: ");
-            string phoneNumber = Console.ReadLine()!;
-            Console.Write("Email: ");
-            string email = Console.ReadLine()!;
-            Console.Write("ID Number: ");
-            string idNumber = Console.ReadLine()!;
-            Console.Write("Address: ");
-            string address = Console.ReadLine()!;
-            Console.Write("Occupation: ");
-            string occupation = Console.ReadLine()!;
-            var accountType = (AccountType)Utility.SelectEnum("Select Account type:\n1. Current Account\n2. Savings Account\n ", 1, 2);
 
-            AccountInfo account = new(id, lastName, firstName, middleName, phoneNumber, email, idNumber, address, occupation, accountType);
+            var userInfo = userAccount.CreateAccount();
+            var accountType = (AccountType)Utility.SelectEnum("Select Account type:\n1. Current Account\n2. Savings Account\n",1, 2);
+
+            AccountInfo account = new (id, userInfo.LastName, userInfo.FirstName, userInfo.MiddleName, userInfo.PhoneNumber, userInfo.Email, userInfo.GetIDNumber(), userInfo.GetAddress(), userInfo.GetOccupation(), accountType);
             accounts.Add(account);
 
             Console.WriteLine("Account created successfully!");
@@ -143,7 +129,7 @@ namespace BankApplication
             Console.WriteLine("Printing Accounts...");
             int accountCount = accounts.Count;
             Console.WriteLine("You have " + "contact".ToQuantity(accountCount));
-            Console.WriteLine("Account Information");
+            Console.WriteLine("==================Accounts Information=======================================");
             if (accountCount == 0)
             {
                 Console.WriteLine("There is no account added yet.");
@@ -198,7 +184,7 @@ namespace BankApplication
 
         private void PrintAllAccounts()
         {
-            var table = new ConsoleTable("Id", "Name", "Account Number", "Phone Number", "Email", "ID Number", "Address", "BVN Number", "Account Type", "Date Created");
+            var table = new ConsoleTable("Id", "Name", "Account Number", "Phone Number", "Email", "ID Number", "Address", "Occupation", "BVN Number", "ATM Number", "ATM Pin", "CSV Number", "Account Type", "Date Created");
 
             foreach (AccountInfo account in accounts)
             {
@@ -207,8 +193,7 @@ namespace BankApplication
                 {
                     fullName = $"{fullName} {account.MiddleName[0]}.";
                 }
-            table.AddRow(account.Id, fullName, account.AccountNumber, account.PhoneNumber, account.Email, account.GetIDNumber(), account.GetAddress(),
-            account.BVNNumber, ((AccountType)account.accountType).Humanize(), account.CreatedAt.Humanize());
+            table.AddRow(account.Id, fullName, account.AccountNumber, account.PhoneNumber, account.Email, account.GetIDNumber(), account.GetAddress(), account.GetOccupation(), account.BVNNumber, account.ATMNumber, account.ATMPin, account.CSVNumber, account.AccountType.Humanize(), account.CreatedAt.Humanize());
             }
             table.Write(Format.Alternative);
         }

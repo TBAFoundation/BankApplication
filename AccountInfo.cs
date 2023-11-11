@@ -1,24 +1,21 @@
-using Humanizer;
-using ConsoleTables;
-
 namespace BankApplication
 {
     public class AccountInfo : UserInfo
     {
         public string AccountNumber { get; private set; } = default!;
-        public string BVNNumber { get; private set; } = default!;
-        private string ATMNumber;
-        private string ATMPin;
-        private string CSVNumber;
+        public string BVNNumber { get; private set; }
+        public string ATMNumber { get; private set; }
+        public string ATMPin { get; private set; }
+        public string CSVNumber { get; private set; }
         public double Balance { get; private set; }
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
-        public AccountType accountType { get; internal set; }
+        public AccountType AccountType { get; set; }
 
         Random random = new Random();
 
-        public AccountInfo(int id, string idNumber, string address, string occupation, string lastName, string firstName, string middleName, string phoneNumber, string email, AccountType accountType) 
-        : base(idNumber, address, occupation, lastName, firstName, middleName, phoneNumber, email)
+        public AccountInfo(int id, string lastName, string firstName, string middleName, string phoneNumber, string email, string idNumber, string address, string occupation,  AccountType accountType)
+            : base(lastName, firstName, middleName, phoneNumber, email, idNumber, address, occupation)
         {
             Id = id;
             AccountNumber = GenerateAccountNumber();
@@ -26,6 +23,7 @@ namespace BankApplication
             ATMNumber = GenerateATMNumber();
             ATMPin = GenerateATMPin();
             CSVNumber = GenerateCSVNumber();
+            AccountType = accountType;
             Balance = 0;
             CreatedAt = DateTime.Now;
         }
