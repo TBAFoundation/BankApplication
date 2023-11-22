@@ -7,12 +7,12 @@ namespace BankApplication
     {
         private List<AccountInfo> accounts = new List<AccountInfo>();
         private UserAccount userAccount = new UserAccount();
+
         public void CreateAccount()
         {
             int id = accounts.Count > 0 ? accounts.Count + 1 : 1;
-
-            string accountNumber = default!;
-            var hasAccount = HasAccount(accountNumber);
+            string phoneNumber = null!;
+            var hasAccount = HasAccount(phoneNumber);
             if (hasAccount)
             {
                 Console.WriteLine("You already have an account with the bank.");
@@ -30,78 +30,98 @@ namespace BankApplication
 
         public void Deposit()
         {
-            Console.Write("Enter account number: ");
-            string accountNumber = Console.ReadLine()!;
-            Console.Write("Enter amount to deposit: ");
-            double amount = Convert.ToDouble(Console.ReadLine());
-
+            string accountNumber = GetAccountNumber();
             AccountInfo account = FindAccount(accountNumber);
+
             if (account != null)
             {
-                // Perform deposit operation on the account
-                Console.WriteLine($"Deposited {amount:C} to account {accountNumber}");
+                Console.Write("Enter the amount to deposit: ");
+                decimal amount = ReadDecimalInput();
+
+                account.Balance += amount;
+                PrintTransactionNotification("Deposit successful.", amount);
             }
             else
             {
-                Console.WriteLine("Account not found!");
+                Console.WriteLine("Account not found.");
             }
         }
 
         public void Withdraw()
         {
-            Console.Write("Enter account number: ");
-            string accountNumber = Console.ReadLine()!;
-            Console.Write("Enter amount to withdraw: ");
-            double amount = Convert.ToDouble(Console.ReadLine());
-
+            string accountNumber = GetAccountNumber();
             AccountInfo account = FindAccount(accountNumber);
+
             if (account != null)
             {
-                // Perform withdraw operation on the account
-                Console.WriteLine($"Withdrawn {amount:C} from account {accountNumber}");
+                Console.Write("Enter the amount to withdraw: ");
+                decimal amount = ReadDecimalInput();
+
+                if (account.Balance >= amount)
+                {
+                    account.Balance -= amount;
+                    PrintTransactionNotification("Withdrawal successful.", amount);
+                }
+                else
+                {
+                    Console.WriteLine("Insufficient funds.");
+                }
             }
             else
             {
-                Console.WriteLine("Account not found!");
+                Console.WriteLine("Account not found.");
             }
         }
         
         public void Transfer()
         {
-            Console.Write("Enter sender account number: ");
-            string senderAccountNumber = Console.ReadLine()!;
-            Console.Write("Enter recipient account number: ");
-            string recipientAccountNumber = Console.ReadLine()!;
-            Console.Write("Enter amount to transfer: ");
-            double amount = Convert.ToDouble(Console.ReadLine());
+            string fromAccountNumber = GetAccountNumber("Enter the account number to transfer from: ");
+            AccountInfo fromAccount = FindAccount(fromAccountNumber);
 
-            AccountInfo senderAccount = FindAccount(senderAccountNumber);
-            AccountInfo recipientAccount = FindAccount(recipientAccountNumber);
-            if (senderAccount != null && recipientAccount != null)
+            if (fromAccount != null)
             {
-                // Perform transfer operation from sender to recipient
-                Console.WriteLine($"Transferred {amount:C} from account {senderAccountNumber} to account {recipientAccountNumber}");
+                string toAccountNumber = GetAccountNumber("Enter the account number to transfer to: ");
+                AccountInfo toAccount = FindAccount(toAccountNumber);
+
+                if (toAccount != null)
+                {
+                    Console.Write("Enter the amount to transfer: ");
+                    decimal amount = ReadDecimalInput();
+
+                    if (fromAccount.Balance >= amount)
+                    {
+                        fromAccount.Balance -= amount;
+                        toAccount.Balance += amount;
+                        PrintTransactionNotification("Transfer successful.", amount);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Insufficient funds.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Destination account not found.");
+                }
             }
             else
             {
-                Console.WriteLine("One or both of the accounts not found!");
+                Console.WriteLine("Source account not found.");
             }
         }
 
         public void CheckBalance()
         {
-            Console.Write("Enter account number: ");
-            string accountNumber = Console.ReadLine()!;
+            string accountNumber = GetAccountNumber();
             AccountInfo account = FindAccount(accountNumber);
+
             if (account != null)
             {
-                // Perform check balance operation on the account
-                Console.WriteLine($"Account Number: {accountNumber}");
-                Console.WriteLine($"Balance: {GetAccountBalance(accountNumber):C}");
+                Console.WriteLine($"Account Balance: {account.Balance}");
             }
             else
             {
-                Console.WriteLine("Account not found!");
+                Console.WriteLine("Account not found.");
             }
         }
 
@@ -111,7 +131,7 @@ namespace BankApplication
             string LastName = Console.ReadLine()!;
 
             Console.WriteLine("Finding Acount Details... ");
-            AccountInfo account = FindAccount(LastName);
+            AccountInfo account = FindAccountByName(LastName);
             
             if (account is null)
             {
@@ -159,12 +179,24 @@ namespace BankApplication
             }
         }
 
-        private bool HasAccount(string accountNumber)
+        private bool HasAccount(string phoneNumber)
         {
-            return accounts.Any(account => account.AccountNumber == accountNumber);
+            return accounts.Any(account => account.PhoneNumber == phoneNumber);
         }
 
-        private AccountInfo FindAccount(string LastName)
+        private AccountInfo FindAccount(string accountNumber)
+        {
+            return accounts.FirstOrDefault(account => account.AccountNumber == accountNumber)!;
+        }
+
+        private string GetAccountNumber(string prompt = "Enter the account number: ")
+        {
+            Console.Write(prompt);
+            string accountNumber = Console.ReadLine()!;
+            return accountNumber;
+        }
+
+        private AccountInfo FindAccountByName(string LastName)
         {
             return accounts.FirstOrDefault(account => account.LastName == LastName)!;
         }
@@ -195,17 +227,47 @@ namespace BankApplication
             table.Write(Format.Alternative);
         }
 
-        private double GetAccountBalance(string accountNumber)
+        private decimal ReadDecimalInput()
         {
-            AccountInfo account = FindAccount(accountNumber);
-            if (account != null)
+            decimal amount;
+            while (!decimal.TryParse(Console.ReadLine(), out amount) || amount < 0)
             {
-                return account.Balance;
+                Console.WriteLine("Invalid input. Please enter a positive decimal value.");
+                Console.Write("Enter the amount: ");
             }
-            else
+
+            return amount;
+        }
+
+        private void PrintTransactionNotification(string transactionType, decimal amount)
+        {
+            foreach (AccountInfo account in accounts)
             {
-                throw new ArgumentException("Account not found!");
+                Console.WriteLine($"Transaction Notification");
+                Console.WriteLine($"Hi {account.LastName},");
+                Console.WriteLine($"{amount} has been {transactionType.ToLower()} from your account.");
+                Console.WriteLine();
+                Console.WriteLine("Here is what you need to know:");
+                Console.WriteLine($"Reference No: {GenerateReferenceNumber()}");
+                Console.WriteLine($"Account No: {account.AccountNumber}");
+                Console.WriteLine($"Account Name: {account.LastName}");
+                Console.WriteLine($"Date and Time: {DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")}");
+                Console.WriteLine($"Value Date: {DateTime.Now.ToString("dd-MM-yyyy")}");
+                Console.WriteLine($"Account Balance: {account.Balance}");
+                Console.WriteLine();
             }
+        }
+
+        private string GenerateReferenceNumber()
+        {
+            Random random = new Random();
+            string randomDigits = string.Empty;
+            for (int i = 0; i < 8; i++)
+            {
+                randomDigits += random.Next(10);
+            }
+            string referenceNumber = $"S{randomDigits}";
+            return referenceNumber;
         }
     }
 }
