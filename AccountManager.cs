@@ -39,7 +39,7 @@ namespace BankApplication
                 decimal amount = ReadDecimalInput();
 
                 account.Balance += amount;
-                PrintTransactionNotification("Deposit successful.", amount);
+                PrintTransactionNotification("Deposit successfully.", amount);
             }
             else
             {
@@ -60,7 +60,7 @@ namespace BankApplication
                 if (account.Balance >= amount)
                 {
                     account.Balance -= amount;
-                    PrintTransactionNotification("Withdrawal successful.", amount);
+                    PrintTransactionNotification("Withdrawal successfully.", amount);
                 }
                 else
                 {
@@ -92,7 +92,7 @@ namespace BankApplication
                     {
                         fromAccount.Balance -= amount;
                         toAccount.Balance += amount;
-                        PrintTransactionNotification("Transfer successful.", amount);
+                        PrintTransactionNotification("Transfer successfully.", amount);
                     }
                     else
                     {
@@ -135,7 +135,7 @@ namespace BankApplication
             
             if (account is null)
             {
-                Console.WriteLine($"Accout with {LastName} not found");
+                Console.WriteLine($"Account with {LastName} not found");
             }
             else
             {
@@ -148,7 +148,7 @@ namespace BankApplication
         {
             Console.WriteLine("Printing Accounts...");
             int accountCount = accounts.Count;
-            Console.WriteLine("You have " + "contact".ToQuantity(accountCount));
+            Console.WriteLine("You have " + "Account Details".ToQuantity(accountCount));
             Console.WriteLine("==================Accounts Information=======================================");
             if (accountCount == 0)
             {
@@ -198,7 +198,7 @@ namespace BankApplication
 
         private AccountInfo FindAccountByName(string LastName)
         {
-            return accounts.FirstOrDefault(account => account.LastName == LastName)!;
+            return accounts.Find(account => account.LastName == LastName)!;
         }
 
         private void Print()
@@ -245,7 +245,7 @@ namespace BankApplication
             {
                 Console.WriteLine($"Transaction Notification");
                 Console.WriteLine($"Hi {account.LastName},");
-                Console.WriteLine($"{amount} has been {transactionType.ToLower()} from your account.");
+                Console.WriteLine($"{amount:C} has been {transactionType.ToLower()}.");
                 Console.WriteLine();
                 Console.WriteLine("Here is what you need to know:");
                 Console.WriteLine($"Reference No: {GenerateReferenceNumber()}");

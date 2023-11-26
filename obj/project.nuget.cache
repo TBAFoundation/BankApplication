@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "0V+BrwFi0KB+LgbKbPGPhpM+jv8scl3v9LmJyxJGZKwu12mg6IXbvOxR06REkhqSS4mD9AfKH4bOQiPk6y/6rw==",
+  "dgSpecHash": "FrpBgCv7zXD+C8MWPSulq9aj+Ct1y8aKt6nqakUxQtuhJm2RHC+GZKTMwfNYGFKN6aAg+tdoQOhmktlpR62CxQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\DELL\\Desktop\\MGQSC#CLASS\\BankApplication\\BankApplication.csproj",
   "expectedPackageFiles": [
@@ -63,7 +63,11 @@
     "C:\\Users\\DELL\\.nuget\\packages\\system.reflection.typeextensions\\4.3.0\\system.reflection.typeextensions.4.3.0.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\system.runtime\\4.3.0\\system.runtime.4.3.0.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\system.text.encoding\\4.3.0\\system.text.encoding.4.3.0.nupkg.sha512",
-    "C:\\Users\\DELL\\.nuget\\packages\\system.threading.tasks\\4.3.0\\system.threading.tasks.4.3.0.nupkg.sha512"
+    "C:\\Users\\DELL\\.nuget\\packages\\system.threading.tasks\\4.3.0\\system.threading.tasks.4.3.0.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\microsoft.netcore.app.ref\\7.0.14\\microsoft.netcore.app.ref.7.0.14.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\7.0.14\\microsoft.windowsdesktop.app.ref.7.0.14.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\7.0.14\\microsoft.aspnetcore.app.ref.7.0.14.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\7.0.14\\microsoft.netcore.app.host.win-x64.7.0.14.nupkg.sha512"
   ],
   "logs": []
 }
